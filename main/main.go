@@ -4,7 +4,6 @@ import (
 	"go-apis/rest/router"
 )
 
-// import "fmt"
 type TestData struct {
 	Data    string `json:"data"`
 	Message string `json:"message"`
