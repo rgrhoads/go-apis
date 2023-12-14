@@ -1,10 +1,7 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
+	"go-apis/rest/router"
 )
 
 // import "fmt"
@@ -14,20 +11,7 @@ type TestData struct {
 }
 
 func main() {
-	router := gin.Default()
-
-	router.GET("/", welcome)
-	router.GET("/test-data", testData)
+	router := router.New()
 
 	router.Run(":3773")
-}
-
-func welcome(c *gin.Context) {
-	log.Printf("Welcome to Modren APIs!")
-}
-
-func testData(c *gin.Context) {
-	response := TestData{"12345", "Hello World!"}
-
-	c.JSON(http.StatusOK, response)
 }
