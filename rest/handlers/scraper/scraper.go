@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gocolly/colly"
 )
 
 func ScrapeMessage(ctx *gin.Context) {
@@ -17,6 +18,16 @@ func ScrapeMessage(ctx *gin.Context) {
 }
 
 func ScrapeWebsite(ctx *gin.Context) {
-	website := ctx.Param("website")
-	fmt.Printf("Scraping the Website: %s", website)
+	// website := ctx.Param("website")
+	// fmt.Printf("Scraping the Website: %s", website)
+
+	url := "https://www.trackingdifferences.com/ETF/ISIN/IE00B1XNHC34"
+
+	c := colly.NewCollector(colly.AllowedDomains("www.trackingdifferences.com", "trackingdifferences.com"))
+
+	c.OnHTML("h1.page-title", func(h *colly.HTMLElement) {
+		fmt.Println(h.Text)
+	})
+
+	c.Visit(url)
 }
