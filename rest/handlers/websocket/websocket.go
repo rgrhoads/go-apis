@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var connections = map[string]*websocket.Conn{}
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -35,7 +37,15 @@ func SendMessage(c *gin.Context) {
 		}
 
 		log.Println(req)
-	}
 
-	// ws.WriteJSON()
+		connections[req.From] = ws
+
+		if con, ok := connections[req.To]; ok {
+			err := con.WriteJSON(&req)
+			if err != nil {
+				log.Printf("Error: %d", err)
+			}
+		}
+
+	}
 }
