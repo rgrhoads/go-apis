@@ -1,11 +1,13 @@
 package router
 
 import (
-	"go-apis/rest/handlers/scraper"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"go-apis/rest/handlers/scraper"
+	"go-apis/rest/handlers/websocket"
 )
 
 func New() *gin.Engine {
@@ -13,9 +15,11 @@ func New() *gin.Engine {
 
 	group := router.Group("/")
 	webScraperGroup := router.Group("/scrape")
+	webSocketGroup := router.Group("/ws")
 
 	setDefaultHandlers(group)
 	setWebScraperHandlers(webScraperGroup)
+	setWebSocketHandlers(webSocketGroup)
 
 	return router
 }
@@ -28,6 +32,10 @@ func setDefaultHandlers(group *gin.RouterGroup) {
 func setWebScraperHandlers(group *gin.RouterGroup) {
 	group.GET("", scraper.ScrapeMessage)
 	group.GET(":website", scraper.ScrapeWebsite)
+}
+
+func setWebSocketHandlers(group *gin.RouterGroup) {
+	group.GET("/message", websocket.SendMessage)
 }
 
 func testData(ctx *gin.Context) {
