@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"go-apis/rest/handlers/games"
 	"go-apis/rest/handlers/scraper"
 	"go-apis/rest/handlers/websocket"
 )
@@ -36,6 +37,8 @@ func setWebScraperHandlers(group *gin.RouterGroup) {
 
 func setWebSocketHandlers(group *gin.RouterGroup) {
 	group.GET("/message", websocket.SendMessage)
+	group.GET("/connect", games.Connect)
+	group.GET("/game", games.SubmitMove)
 }
 
 func testData(ctx *gin.Context) {

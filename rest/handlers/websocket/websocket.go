@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -10,16 +11,16 @@ import (
 
 var connections = map[string]*websocket.Conn{}
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 type Request struct {
 	From    string `json:"from"`
 	To      string `json:"to"`
 	Message string `json:"message"`
+}
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 func SendMessage(c *gin.Context) {
@@ -36,9 +37,10 @@ func SendMessage(c *gin.Context) {
 			log.Printf("Error: %d", err)
 		}
 
-		log.Println(req)
+		log.Printf("Message: %v", req.Message)
 
 		connections[req.From] = ws
+		req.Message = fmt.Sprintf("%s %s", req.Message, req.To)
 
 		if con, ok := connections[req.To]; ok {
 			err := con.WriteJSON(&req)
