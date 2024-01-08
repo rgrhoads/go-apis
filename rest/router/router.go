@@ -37,8 +37,8 @@ func setWebScraperHandlers(group *gin.RouterGroup) {
 
 func setWebSocketHandlers(group *gin.RouterGroup) {
 	group.GET("/message", websocket.SendMessage)
-	group.GET("/connect", games.Connect)
-	group.GET("/game", games.SubmitMove)
+	// group.GET("/game", games.SubmitMove)
+	group.GET("/game/:gameType", games.TicTacToe)
 }
 
 func testData(ctx *gin.Context) {
