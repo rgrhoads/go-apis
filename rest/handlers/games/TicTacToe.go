@@ -37,6 +37,8 @@ type Game struct {
 	ConnO   *websocket.Conn `json:"connO"`
 	PlayerX string          `json:"pX"`
 	PlayerO string          `json:"pO"`
+	Turn    string          `json:"turn"`
+	Winner  string          `json:"winner"`
 }
 
 type Move struct {
@@ -66,6 +68,7 @@ func TicTacToe(c *gin.Context) {
 	if len(games) == 0 {
 		var id = uuid.NewString()
 		var game Game
+		game.Turn = "X"
 
 		games[id] = &game
 	}
@@ -119,6 +122,7 @@ func TicTacToe(c *gin.Context) {
 				} else {
 					log.Println("Creating new game")
 					var game Game
+					game.Turn = "X"
 
 					gameId = uuid.NewString()
 					game.Id = gameId
@@ -143,10 +147,18 @@ func TicTacToe(c *gin.Context) {
 				log.Printf("Error: %d", err)
 			}
 
-			if updatedGame.PlayerX == action.Username {
+			if updatedGame.PlayerX == action.Username && updatedGame.Turn == "X" {
 				updatedGame.Board[position] = "X"
-			} else if updatedGame.PlayerO == action.Username {
+
+				if updatedGame.Winner == "" {
+					updatedGame.Turn = "O"
+				}
+			} else if updatedGame.PlayerO == action.Username && updatedGame.Turn == "O" {
 				updatedGame.Board[position] = "O"
+
+				if updatedGame.Winner == "" {
+					updatedGame.Turn = "X"
+				}
 			}
 
 			err = games[action.GameId].ConnX.WriteJSON(&updatedGame)
@@ -161,45 +173,5 @@ func TicTacToe(c *gin.Context) {
 
 		}
 
-		// else {
-		// 	if con, ok := connections[action.Username]; ok {
-		// 		err := con.WriteJSON(&action)
-		// 		if err != nil {
-		// 			log.Printf("Error: %d", err)
-		// 		}
-		// 	}
-		// }
-
-		// log.Println(action.Username)
-		// connections[action.Username] = ws
-
 	}
 }
-
-// func SubmitMove(c *gin.Context) {
-// 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-// 	if err != nil {
-// 		log.Printf("Error: %d", err)
-// 	}
-
-// 	for {
-// 		var move Move
-
-// 		err = ws.ReadJSON(&move)
-// 		if err != nil {
-// 			log.Printf("Error: %d", err)
-// 		}
-
-// 		log.Println(move)
-
-// 		connections[move.Username] = ws
-
-// 		if con, ok := connections[move.Username]; ok {
-// 			err := con.WriteJSON(&move)
-// 			if err != nil {
-// 				log.Printf("Error: %d", err)
-// 			}
-// 		}
-
-// 	}
-// }
